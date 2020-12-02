@@ -1,6 +1,7 @@
 # Advent Of Code
 
-Tracking my participation in 2020's [Advent of Code](https://adventofcode.com)
+Tracking my participation in 2020's [Advent of Code](https://adventofcode.com),
+also going back and doing some [historical puzzles](https://adventofcode.com/events)
 
 ## Programming Language
 
