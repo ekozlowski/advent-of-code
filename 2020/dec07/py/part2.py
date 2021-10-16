@@ -1,6 +1,4 @@
 from os import walk
-import re
-
 lines = [x.strip() for x in open('../input.txt', 'r').readlines() if x.strip()]
 
 bags = {}
@@ -8,37 +6,35 @@ bags = {}
 class Bag:
     def __init__(self, name):
         self.name = name
-        self.contains = {}
+        self.contains = []
+
+    def __str__(self):
+        return f"<Bag: {self.name}>"
+
+    def __repr__(self):
+        return str(self)
 
     def contain(self, name, amount):
-        bags[name] = Bag(name)
-        self.contains[name] = amount
+        # I am deliberately flatting the objects here, and storing one _per_
+        # count, in order to make the calculation of how many are contained
+        # within easier to use recursion on.
+        for _ in range(amount):
+            b = bags.setdefault(name, Bag(name))
+            self.contains.append(b)
 
-    @property
-    def inner_bag_count(self):
-        # I contain _x_ bags... that's all I care about, for _me_.
-        count = 0
-        for bag in self.contains:
-            count += self.contains.get(bag)
-        return count
 
 example_data = """
-light red bags contain 1 bright white bag, 2 muted yellow bags.
-dark orange bags contain 3 bright white bags, 4 muted yellow bags.
-bright white bags contain 1 shiny gold bag.
-muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
-shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
-dark olive bags contain 3 faded blue bags, 4 dotted black bags.
-vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
-faded blue bags contain no other bags.
-dotted black bags contain no other bags.
+shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags.
 """
 
-for line in lines:
+for line in lines: # [x for x in example_data.split('\n') if x.strip]:
     pieces = line.split('bag')
-    print('---')
-    print(pieces)
-    print('---')
     this_bag = pieces[0].strip()
     this_bag = bags.setdefault(this_bag, Bag(this_bag))
     for p in pieces[1:]:
@@ -62,18 +58,14 @@ for line in lines:
 
 bag = bags.get('shiny gold')
 
-count = bag.inner_bag_count
+count = 0
 
-picture = """
+def get_count(bag):
+    global count
+    count += len(bag.contains)
+    for bag in bag.contains:
+        get_count(bag)
 
-bag
-| \
-|  \
-bag bag
-| \  \   \
-bag bag bag bag
-  
+get_count(bags.get('shiny gold'))
+print(f"A 'shiny gold' bag contains {count} other bags.")
 
-
-
-"""
