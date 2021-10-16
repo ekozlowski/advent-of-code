@@ -1,3 +1,6 @@
+from loguru import logger
+
+
 lines = [x.strip() for x in open('../input.txt', 'r').readlines() if x.strip()]
 print(len(lines))
 
@@ -11,8 +14,6 @@ acc +1
 jmp -4
 acc +6"""
 
-#lines = [x.strip() for x in test_data.split('\n')]
-#print(lines)
 
 """
 If I'm understanding this right, there are just three commands...
@@ -37,8 +38,8 @@ def testlines(lines):
     while execution < len(lines):
         if execution in executed:
             print(f"Re-executing: {execution} - Infinite loop break condition hit.")
-            break
-        print(f"Executing {lines[execution]}")
+            return False
+        #print(f"Executing {lines[execution]}")
         executed.add(execution)
         command, value = lines[execution].split()
         value = int(value)
@@ -50,5 +51,25 @@ def testlines(lines):
             acc += value
         elif command == 'nop':
             pass
+    return f"Accumulator is {acc}"
 
-    print(f"Accumulator is {acc}")
+original_lines = lines
+
+for x in range(len(original_lines)):
+    logger.debug(f"Permutation {x}")
+    newlines = original_lines.copy()
+    # try replacing the line at _x_ with jmp if it's a nop, or nop if its jmp.
+    # then run the program again, and see if it terminates.
+    # if it's not a nop or jmp, then just move to the next line.
+    line = newlines[x]
+    if line.startswith('nop'):
+        line = 'jmp' + line[3:]    
+    elif line.startswith('jmp'):
+        line = 'nop' + line[3:]
+    else:
+        continue
+    newlines[x] = line
+    result = testlines(newlines)
+    if result:
+        print(result)
+        break

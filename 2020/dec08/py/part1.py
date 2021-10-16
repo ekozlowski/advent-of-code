@@ -49,5 +49,5 @@ while True:
         acc += value
     elif command == 'nop':
         pass
-    
+
 print(f"Accumulator is {acc}")

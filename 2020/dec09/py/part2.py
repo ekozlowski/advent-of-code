@@ -1,5 +1,6 @@
 from itertools import combinations
 from functools import reduce
+from loguru import logger
 
 sample = """35
 20
@@ -41,14 +42,19 @@ index = 0
 found = False
 valid_values = get_valid_values()
 while not found:
-    start = index
     this_sum = sum(valid_values[start:index])
-    if this_sum > weakness_int:
-        start += 1
-        print(valid_values[start:index])
-    elif 
-    else:
+    if this_sum < weakness_int:
         index += 1
-    
+    if this_sum == weakness_int:
+        found = True
+    if this_sum > weakness_int or index > len(valid_values):
+        logger.debug("Resetting.")
+        start = start + 1
+        index = start
+
 print(f"Start {start}, End: {index}")
-print(f"{valid_values[start: start+index]}")
+print(f"{valid_values[start:index]}")
+print(f"{sum(valid_values[start:index])}")
+values = valid_values[start:index]
+values.sort()
+print(f"{values[0]} + {values[-1]} = {values[0] + values[-1]}")
