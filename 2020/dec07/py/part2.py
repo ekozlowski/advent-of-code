@@ -3,8 +3,6 @@ import re
 
 lines = [x.strip() for x in open('../input.txt', 'r').readlines() if x.strip()]
 
-
-
 bags = {}
 
 class Bag:
@@ -16,6 +14,13 @@ class Bag:
         bags[name] = Bag(name)
         self.contains[name] = amount
 
+    @property
+    def inner_bag_count(self):
+        # I contain _x_ bags... that's all I care about, for _me_.
+        count = 0
+        for bag in self.contains:
+            count += self.contains.get(bag)
+        return count
 
 example_data = """
 light red bags contain 1 bright white bag, 2 muted yellow bags.
@@ -29,7 +34,7 @@ faded blue bags contain no other bags.
 dotted black bags contain no other bags.
 """
 
-for line in [x for x in example_data.split('\n') if x.strip()]:
+for line in lines:
     pieces = line.split('bag')
     print('---')
     print(pieces)
@@ -55,7 +60,20 @@ for line in [x for x in example_data.split('\n') if x.strip()]:
             print(p)
             raise
 
-print(bags)
-for b in bags:
-    print(bags.get(b).name)
-    print(bags.get(b).contains)
+bag = bags.get('shiny gold')
+
+count = bag.inner_bag_count
+
+picture = """
+
+bag
+| \
+|  \
+bag bag
+| \  \   \
+bag bag bag bag
+  
+
+
+
+"""
